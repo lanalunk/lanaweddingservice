@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Vendor Wedding</title>
+<style>
+  body {font-family: Arial, sans-serif; background: #f8f5f2; margin:0; padding:0;}
+  header {background:#fff; padding:20px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+  header h1 {color:#d17a7a;}
+  .container {width:90%; max-width:600px; margin:20px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  label {display:block; margin-top:15px; margin-bottom:5px;}
+  input, select {width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:14px;}
+  button {margin-top:20px; padding:10px 15px; background:#d17a7a; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer;}
+  button:hover {background:#b66161;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Form Order Vendor</h1>
+</header>
+
+<div class="container">
+  <form id="orderForm">
+    <label for="vendorName">Vendor:</label>
+    <input type="text" id="vendorName" readonly>
+
+    <label for="packageSelect">Pilih Paket:</label>
+    <select id="packageSelect" required></select>
+
+    <label for="customerName">Nama Pemesan:</label>
+    <input type="text" id="customerName" placeholder="Masukkan nama Anda" required>
+
+    <label for="customerWA">Nomor WhatsApp:</label>
+    <input type="text" id="customerWA" placeholder="Contoh: 6281234567890" required>
+
+    <button type="submit">Kirim ke WhatsApp</button>
+  </form>
+</div>
+
+<script>
+// Ambil vendor yang dipilih dari localStorage
+const vendorNameInput = document.getElementById('vendorName');
+const packageSelect = document.getElementById('packageSelect');
+
+const selectedVendor = localStorage.getItem('selectedVendor');
+vendorNameInput.value = selectedVendor || 'Tidak ada vendor terpilih';
+
+// Data vendor & paket (sama dengan index.html)
+const vendors = [
+  {name:"Vendor WO A", packages:["Bronze","Silver","Gold"], whatsapp:"6281234567890"},
+  {name:"MUA B", packages:["Basic","Premium"], whatsapp:"6281234567890"},
+  {name:"Catering C", packages:["Paket A","Paket B"], whatsapp:"6281234567890"},
+  {name:"Dekorasi D", packages:["Silver","Gold"], whatsapp:"6281234567890"},
+];
+
+// Cari vendor yang sesuai
+const vendorData = vendors.find(v => v.name === selectedVendor);
+if(vendorData){
+  vendorData.packages.forEach(p=>{
+    const option = document.createElement('option');
+    option.value = p;
+    option.textContent = p;
+    packageSelect.appendChild(option);
+  });
+}
+
+// Submit form → kirim WhatsApp
+document.getElementById('orderForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('customerName').value;
+  const wa = document.getElementById('customerWA').value;
+  const vendor = vendorNameInput.value;
+  const paket = packageSelect.value;
+  const vendorWA = vendorData ? vendorData.whatsapp : '6281234567890';
+
+  const message = `Halo, saya ingin memesan vendor wedding.\n\nVendor: ${vendor}\nPaket: ${paket}\nNama Pemesan: ${name}\nNo WA: ${wa}`;
+  const url = `https://wa.me/${vendorWA}?text=${encodeURIComponent(message)}`;
+
+  window.open(url, '_blank');
+});
+</script>
+
+</body>
+</html>
