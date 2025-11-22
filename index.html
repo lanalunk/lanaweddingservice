@@ -3,112 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Vendor Wedding</title>
+<title>Wedding Vendor Selection</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
   * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
   body {background:#fff0f5; color:#333;}
   header {background:#ffdee9; padding:25px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
   header h1 {color:#d6336c; font-size:26px;}
-  .container {width:90%; max-width:900px; margin:20px auto;}
-  .vendor-item {background:#fff; border-radius:15px; padding:15px; margin-bottom:15px; box-shadow:0 2px 12px rgba(0,0,0,0.1);}
-  .vendor-item h3 {color:#d6336c; margin-bottom:5px;}
-  .vendor-item p {font-size:14px; margin-bottom:5px;}
-  .vendor-item select, .vendor-item input {padding:6px 8px; margin-right:10px; border-radius:5px; border:1px solid #ccc;}
-  .total {font-size:18px; font-weight:600; margin-top:20px; text-align:right; color:#d6336c;}
-  #sendWA {width:100%; margin-top:20px; padding:12px; background:#d6336c; color:#fff; border:none; border-radius:10px; font-size:18px; cursor:pointer; transition:0.3s;}
-  #sendWA:hover {background:#b61a4b;}
+  .container {width:90%; max-width:1200px; margin:20px auto;}
+  h2 {margin:20px 0 10px; color:#d6336c;}
+  
+  /* Kategori Grid */
+  .categories {display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:15px;}
+  .category-card {background:linear-gradient(135deg,#ffd6e0,#ffdee9); border-radius:15px; padding:15px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+  .category-card:hover {transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+  .category-card img {width:50px; height:50px; margin-bottom:5px;}
+  .category-card h3 {font-size:14px; font-weight:600; line-height:1.2;}
+
+  /* Vendor List */
+  .vendor-list {display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-top:20px;}
+  .vendor-card {background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); position:relative; transition:all 0.3s;}
+  .vendor-card:hover {transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+  .vendor-card img {width:100%; height:150px; object-fit:cover;}
+  .vendor-card .info {padding:12px;}
+  .vendor-card .info h4 {margin-bottom:5px; font-size:16px; color:#d6336c;}
+  .vendor-card .info p {font-size:13px; margin-bottom:5px;}
+  .vendor-card .info ul {font-size:13px; margin-bottom:5px; padding-left:20px; list-style:disc;}
+  .vendor-card input[type=checkbox] {position:absolute; top:10px; right:10px; width:22px; height:22px; cursor:pointer;}
+  
+  /* Button */
+  #proceedBtn {display:block; width:100%; margin:25px 0; padding:12px; background:#d6336c; color:#fff; border:none; border-radius:10px; font-size:18px; cursor:pointer; transition:0.3s;}
+  #proceedBtn:hover {background:#b61a4b;}
+
   @media(max-width:600px){
-    .vendor-item {padding:12px;}
-    .vendor-item select, .vendor-item input {margin-bottom:8px; width:100%;}
-    .total {text-align:left;}
+    .categories {grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
+    .vendor-card img {height:130px;}
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Form Order Vendor</h1>
+  <h1>Pilih Vendor Wedding Favoritmu</h1>
 </header>
 
-<div class="container" id="vendorContainer"></div>
+<div class="container">
+  <h2>Kategori Vendor</h2>
+  <div class="categories" id="categories"></div>
 
-<div class="total" id="totalPrice">Total: Rp0</div>
-<button id="sendWA">Kirim ke WhatsApp</button>
+  <h2>Daftar Vendor</h2>
+  <div class="vendor-list" id="vendor-list"></div>
+
+  <button id="proceedBtn">Lanjutkan ke Order</button>
+</div>
 
 <script>
-const selectedVendors = JSON.parse(localStorage.getItem('selectedVendors') || '[]');
-const allVendors = [
-  {name:"Vendor WO A", category:"WO", location:"Jakarta", packages:["Bronze Rp5.000.000","Silver Rp7.500.000","Gold Rp10.000.000"], image:"", whatsapp:"6285727754442"},
-  {name:"Vendor WO B", category:"WO", location:"Bandung", packages:["Silver Rp6.000.000","Gold Rp9.000.000"], image:"", whatsapp:"6285727754442"},
-  {name:"MUA B", category:"MUA", location:"Bandung", packages:["Basic Rp1.500.000","Premium Rp2.500.000"], image:"", whatsapp:"6285727754442"},
-  {name:"MUA C", category:"MUA", location:"Jakarta", packages:["Silver Rp3.000.000","Gold Rp5.000.000"], image:"", whatsapp:"6285727754442"},
-  {name:"Catering C", category:"Catering", location:"Surabaya", packages:["Paket A Rp3.000.000","Paket B Rp5.000.000"], image:"", whatsapp:"6285727754442"},
-  {name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", packages:["Silver Rp4.000.000","Gold Rp6.500.000"], image:"", whatsapp:"6285727754442"},
+// Semua kategori lengkap
+const categories = [
+  {id:"WO", name:"Wedding Organizer", icon:"https://img.icons8.com/ios/50/wedding.png"},
+  {id:"MUA", name:"Make-Up Artist", icon:"https://img.icons8.com/ios/50/makeup.png"},
+  {id:"Catering", name:"Catering", icon:"https://img.icons8.com/ios/50/restaurant.png"},
+  {id:"Dekorasi", name:"Dekorasi", icon:"https://img.icons8.com/ios/50/decor.png"},
+  {id:"Venue", name:"Venue (Gedung/Hotel)", icon:"https://img.icons8.com/ios/50/hotel.png"},
+  {id:"Fotografer", name:"Fotografer", icon:"https://img.icons8.com/ios/50/camera.png"},
+  {id:"Videografer", name:"Videografer", icon:"https://img.icons8.com/ios/50/video.png"},
+  {id:"Entertainment", name:"Entertainment / Musik", icon:"https://img.icons8.com/ios/50/music.png"},
+  {id:"MC", name:"MC / Pembawa Acara", icon:"https://img.icons8.com/ios/50/microphone.png"},
+  {id:"Hantaran", name:"Hantaran / Seserahan", icon:"https://img.icons8.com/ios/50/gift.png"},
+  {id:"Tenda", name:"Sewa Tenda", icon:"https://img.icons8.com/ios/50/tent.png"},
+  {id:"Sound", name:"Sound / Lighting", icon:"https://img.icons8.com/ios/50/speaker.png"},
+  {id:"Souvenir", name:"Souvenir", icon:"https://img.icons8.com/ios/50/souvenir.png"},
+  {id:"Kue", name:"Kue Pengantin", icon:"https://img.icons8.com/ios/50/cake.png"},
+  {id:"Photobooth", name:"Photobooth / Video 360", icon:"https://img.icons8.com/ios/50/photobooth.png"},
+  {id:"Percetakan", name:"Percetakan Undangan", icon:"https://img.icons8.com/ios/50/print.png"},
+  {id:"Digital", name:"Undangan Digital", icon:"https://img.icons8.com/ios/50/digital.png"},
+  {id:"Lainnya", name:"Peralatan Lain-lain", icon:"https://img.icons8.com/ios/50/tools.png"},
 ];
 
-const vendorContainer = document.getElementById('vendorContainer');
-const totalPriceEl = document.getElementById('totalPrice');
+// Simulasi beberapa vendor per kategori
+const vendors = [
+  {name:"Vendor WO A", category:"WO", location:"Jakarta", packages:["Bronze Rp5.000.000","Silver Rp7.500.000","Gold Rp10.000.000"], image:"https://source.unsplash.com/400x300/?wedding", whatsapp:"6285727754442"},
+  {name:"Vendor WO B", category:"WO", location:"Bandung", packages:["Silver Rp6.000.000","Gold Rp9.000.000"], image:"https://source.unsplash.com/400x300/?wedding2", whatsapp:"6285727754442"},
+  {name:"MUA B", category:"MUA", location:"Bandung", packages:["Basic Rp1.500.000","Premium Rp2.500.000"], image:"https://source.unsplash.com/400x300/?makeup", whatsapp:"6285727754442"},
+  {name:"MUA C", category:"MUA", location:"Jakarta", packages:["Silver Rp3.000.000","Gold Rp5.000.000"], image:"https://source.unsplash.com/400x300/?makeup2", whatsapp:"6285727754442"},
+  {name:"Catering C", category:"Catering", location:"Surabaya", packages:["Paket A Rp3.000.000","Paket B Rp5.000.000"], image:"https://source.unsplash.com/400x300/?catering", whatsapp:"6285727754442"},
+  {name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", packages:["Silver Rp4.000.000","Gold Rp6.500.000"], image:"https://source.unsplash.com/400x300/?wedding-decor", whatsapp:"6285727754442"},
+  {name:"Venue A", category:"Venue", location:"Jakarta", packages:["Standard Rp8.000.000","Premium Rp12.000.000"], image:"https://source.unsplash.com/400x300/?venue", whatsapp:"6285727754442"},
+  {name:"Fotografer A", category:"Fotografer", location:"Bandung", packages:["Paket Foto Rp2.500.000","Paket Video+Foto Rp4.500.000"], image:"https://source.unsplash.com/400x300/?photography", whatsapp:"6285727754442"},
+  {name:"Videografer A", category:"Videografer", location:"Jakarta", packages:["Paket Video Rp3.000.000","Full Paket Rp5.500.000"], image:"https://source.unsplash.com/400x300/?video", whatsapp:"6285727754442"},
+  {name:"MC A", category:"MC", location:"Surabaya", packages:["Basic Rp1.000.000","Premium Rp2.000.000"], image:"https://source.unsplash.com/400x300/?microphone", whatsapp:"6285727754442"},
+];
 
-function formatPrice(str){
-  return parseInt(str.replace(/\D/g,''));
-}
+// Elemen DOM
+const categoryContainer = document.getElementById('categories');
+const vendorList = document.getElementById('vendor-list');
 
-function formatRupiah(num){
-  return 'Rp' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");
-}
-
-// Render vendor form
-selectedVendors.forEach(vName=>{
-  const vendor = allVendors.find(v=>v.name===vName);
-  if(!vendor) return;
-  const div = document.createElement('div');
-  div.className='vendor-item';
-  div.innerHTML=`
-    <h3>${vendor.name}</h3>
-    <p>Lokasi: ${vendor.location}</p>
-    <label>Pilih Paket:</label>
-    <select class="packageSelect">
-      ${vendor.packages.map(p=>`<option value="${formatPrice(p)}">${p}</option>`).join('')}
-    </select>
-    <label>Jumlah:</label>
-    <input type="number" class="qtyInput" value="1" min="1">
-  `;
-  vendorContainer.appendChild(div);
+// Render kategori
+categories.forEach(cat=>{
+  const card=document.createElement('div');
+  card.className='category-card';
+  card.dataset.category=cat.id;
+  card.innerHTML=`<img src="${cat.icon}" alt="${cat.name}"><h3>${cat.name}</h3>`;
+  categoryContainer.appendChild(card);
 });
 
-// Hitung total
-function calculateTotal(){
-  let total = 0;
-  const items = document.querySelectorAll('.vendor-item');
-  items.forEach(item=>{
-    const price = parseInt(item.querySelector('.packageSelect').value);
-    const qty = parseInt(item.querySelector('.qtyInput').value);
-    total += price * qty;
+// Tampilkan vendor sesuai kategori
+function displayVendors(category){
+  vendorList.innerHTML='';
+  const filtered = vendors.filter(v => v.category === category);
+  if(filtered.length===0){vendorList.innerHTML='<p>Tidak ada vendor ditemukan.</p>'; return;}
+  filtered.forEach(v=>{
+    const card=document.createElement('div');
+    card.className='vendor-card';
+    card.innerHTML=`
+      <input type="checkbox" class="vendorCheckbox" data-name="${v.name}">
+      <img src="${v.image}" alt="${v.name}">
+      <div class="info">
+        <h4>${v.name}</h4>
+        <p>Lokasi: ${v.location}</p>
+        <ul>${v.packages.map(p=>`<li>${p}</li>`).join('')}</ul>
+      </div>
+    `;
+    vendorList.appendChild(card);
   });
-  totalPriceEl.textContent = 'Total: ' + formatRupiah(total);
 }
 
-// Event listener
-vendorContainer.addEventListener('change', calculateTotal);
-
-// Kirim ke WA
-document.getElementById('sendWA').addEventListener('click', ()=>{
-  let message = 'Order Vendor Wedding:%0A';
-  const items = document.querySelectorAll('.vendor-item');
-  items.forEach(item=>{
-    const name = item.querySelector('h3').textContent;
-    const packageText = item.querySelector('.packageSelect').selectedOptions[0].textContent;
-    const qty = item.querySelector('.qtyInput').value;
-    message += `${name} - ${packageText} x${qty}%0A`;
-  });
-  message += totalPriceEl.textContent.replace('Total: ','%0ATotal: ');
-  const waNumber = '6285727754442';
-  window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank');
+// Event listener kategori
+categoryContainer.addEventListener('click', e=>{
+  const card = e.target.closest('.category-card');
+  if(!card) return;
+  const category = card.dataset.category;
+  displayVendors(category);
 });
 
-// Initial total
-calculateTotal();
+// Tombol lanjutkan ke order
+document.getElementById('proceedBtn').addEventListener('click', ()=>{
+  const selected = Array.from(document.querySelectorAll('.vendorCheckbox:checked')).map(cb=>cb.dataset.name);
+  if(selected.length===0){alert('Pilih minimal satu vendor!'); return;}
+  localStorage.setItem('selectedVendors', JSON.stringify(selected));
+  window.location.href = 'order.html';
+});
 </script>
 
 </body>
