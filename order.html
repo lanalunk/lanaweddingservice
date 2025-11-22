@@ -4,82 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order Vendor Wedding</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  body {font-family: Arial, sans-serif; background: #f8f5f2; margin:0; padding:0;}
-  header {background:#fff; padding:20px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-  header h1 {color:#d17a7a;}
-  .container {width:90%; max-width:600px; margin:20px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-  label {display:block; margin-top:15px; margin-bottom:5px;}
-  input, select {width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; font-size:14px;}
-  button {margin-top:20px; padding:10px 15px; background:#d17a7a; color:#fff; border:none; border-radius:5px; font-size:16px; cursor:pointer;}
-  button:hover {background:#b66161;}
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif;}
+body {background:#fff0f5; color:#333;}
+header {background:#ffdee9; padding:25px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+header h1 {color:#d6336c;font-size:26px;}
+.container {width:90%; max-width:1200px; margin:20px auto;}
+h2 {margin:20px 0 10px;color:#d6336c;}
+.vendor-list {display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px;}
+.vendor-card {background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); padding:12px; transition:all 0.3s;}
+.vendor-card:hover {transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+.vendor-card img {width:100%; height:150px; object-fit:cover; border-radius:10px;}
+.vendor-card h4 {margin:10px 0 5px; color:#d6336c;}
+.vendor-card p {font-size:13px; margin-bottom:5px;}
+.vendor-card select {width:100%; padding:6px; border-radius:5px; margin-bottom:5px;}
+#totalPrice {margin:20px 0; font-size:18px; font-weight:600; color:#d6336c;}
+#sendWA {display:block; width:100%; padding:12px; background:#25D366; color:#fff; font-size:18px; border:none; border-radius:10px; cursor:pointer; transition:0.3s;}
+#sendWA:hover {background:#1ebe57;}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Form Order Vendor</h1>
+<h1>Order Vendor Wedding</h1>
 </header>
 
 <div class="container">
-  <form id="orderForm">
-    <label for="vendorName">Vendor:</label>
-    <input type="text" id="vendorName" readonly>
+<h2>Vendor yang Dipilih</h2>
+<div class="vendor-list" id="vendor-list"></div>
 
-    <label for="packageSelect">Pilih Paket:</label>
-    <select id="packageSelect" required></select>
+<div id="totalPrice">Total Harga: Rp0</div>
 
-    <label for="customerName">Nama Pemesan:</label>
-    <input type="text" id="customerName" placeholder="Masukkan nama Anda" required>
-
-    <label for="customerWA">Nomor WhatsApp:</label>
-    <input type="text" id="customerWA" placeholder="Contoh: 6281234567890" required>
-
-    <button type="submit">Kirim ke WhatsApp</button>
-  </form>
+<button id="sendWA">Kirim Pesanan via WhatsApp</button>
 </div>
 
 <script>
-// Ambil vendor yang dipilih dari localStorage
-const vendorNameInput = document.getElementById('vendorName');
-const packageSelect = document.getElementById('packageSelect');
+// Data vendor yang dipilih
+let selectedVendors = JSON.parse(localStorage.getItem('selectedVendors')) || [];
 
-const selectedVendor = localStorage.getItem('selectedVendor');
-vendorNameInput.value = selectedVendor || 'Tidak ada vendor terpilih';
-
-// Data vendor & paket (sama dengan index.html)
+// Data vendor lengkap (sama dengan index.html)
 const vendors = [
-  {name:"Vendor WO A", packages:["Bronze","Silver","Gold"], whatsapp:"6281234567890"},
-  {name:"MUA B", packages:["Basic","Premium"], whatsapp:"6281234567890"},
-  {name:"Catering C", packages:["Paket A","Paket B"], whatsapp:"6281234567890"},
-  {name:"Dekorasi D", packages:["Silver","Gold"], whatsapp:"6281234567890"},
+{name:"Vendor WO A", category:"WO", location:"Jakarta", packages:[{name:"Bronze", price:5000000},{name:"Silver", price:7500000},{name:"Gold", price:10000000}], image:"https://source.unsplash.com/400x300/?wedding", whatsapp:"6285727754442"},
+{name:"Vendor WO B", category:"WO", location:"Bandung", packages:[{name:"Silver", price:6000000},{name:"Gold", price:9000000}], image:"https://source.unsplash.com/400x300/?wedding2", whatsapp:"6285727754442"},
+{name:"MUA B", category:"MUA", location:"Bandung", packages:[{name:"Basic", price:1500000},{name:"Premium", price:2500000}], image:"https://source.unsplash.com/400x300/?makeup", whatsapp:"6285727754442"},
+{name:"MUA C", category:"MUA", location:"Jakarta", packages:[{name:"Silver", price:3000000},{name:"Gold", price:5000000}], image:"https://source.unsplash.com/400x300/?makeup2", whatsapp:"6285727754442"},
+{name:"Catering C", category:"Catering", location:"Surabaya", packages:[{name:"Paket A", price:3000000},{name:"Paket B", price:5000000}], image:"https://source.unsplash.com/400x300/?catering", whatsapp:"6285727754442"},
+{name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", packages:[{name:"Silver", price:4000000},{name:"Gold", price:6500000}], image:"https://source.unsplash.com/400x300/?wedding-decor", whatsapp:"6285727754442"},
+{name:"Venue A", category:"Venue", location:"Jakarta", packages:[{name:"Standard", price:8000000},{name:"Premium", price:12000000}], image:"https://source.unsplash.com/400x300/?venue", whatsapp:"6285727754442"},
+{name:"Venue B", category:"Venue", location:"Bandung", packages:[{name:"Standard", price:7000000},{name:"Premium", price:11000000}], image:"https://source.unsplash.com/400x300/?venue2", whatsapp:"6285727754442"},
 ];
 
-// Cari vendor yang sesuai
-const vendorData = vendors.find(v => v.name === selectedVendor);
-if(vendorData){
-  vendorData.packages.forEach(p=>{
-    const option = document.createElement('option');
-    option.value = p;
-    option.textContent = p;
-    packageSelect.appendChild(option);
-  });
+// DOM elements
+const vendorList = document.getElementById('vendor-list');
+const totalPriceEl = document.getElementById('totalPrice');
+
+// Render vendor
+function renderVendors(){
+vendorList.innerHTML='';
+selectedVendors.forEach(name=>{
+const vendor = vendors.find(v=>v.name===name);
+if(vendor){
+const card = document.createElement('div');
+card.className='vendor-card';
+let packageOptions = vendor.packages.map((p,index)=>`<option value="${index}">${p.name}: Rp${p.price.toLocaleString('id-ID')}</option>`).join('');
+card.innerHTML=`
+<img src="${vendor.image}" alt="${vendor.name}">
+<h4>${vendor.name}</h4>
+<p>Lokasi: ${vendor.location}</p>
+<label>Pilih Paket:</label>
+<select data-name="${vendor.name}">${packageOptions}</select>
+<label>Jumlah:</label>
+<select data-name="${vendor.name}" class="qtySelect">${[...Array(10).keys()].map(i=>`<option value="${i+1}">${i+1}</option>`).join('')}</select>
+`;
+vendorList.appendChild(card);
+});
+calculateTotal();
+document.querySelectorAll('select').forEach(sel=>sel.addEventListener('change',calculateTotal));
 }
 
-// Submit form → kirim WhatsApp
-document.getElementById('orderForm').addEventListener('submit', function(e){
-  e.preventDefault();
-  const name = document.getElementById('customerName').value;
-  const wa = document.getElementById('customerWA').value;
-  const vendor = vendorNameInput.value;
-  const paket = packageSelect.value;
-  const vendorWA = vendorData ? vendorData.whatsapp : '6281234567890';
-
-  const message = `Halo, saya ingin memesan vendor wedding.\n\nVendor: ${vendor}\nPaket: ${paket}\nNama Pemesan: ${name}\nNo WA: ${wa}`;
-  const url = `https://wa.me/${vendorWA}?text=${encodeURIComponent(message)}`;
-
-  window.open(url, '_blank');
+// Hitung total harga
+function calculateTotal(){
+let total=0;
+selectedVendors.forEach(name=>{
+const vendor = vendors.find(v=>v.name===name);
+if(vendor){
+const sel = document.querySelector(`select[data-name="${vendor.name}"]`);
+const qtySel = document.querySelector(`select.qtySelect[data-name="${vendor.name}"]`);
+const pkg = vendor.packages[sel.value];
+const qty = parseInt(qtySel.value);
+total += pkg.price * qty;
+}
 });
+totalPriceEl.textContent=`Total Harga: Rp${total.toLocaleString('id-ID')}`;
+}
+
+// Kirim ke WhatsApp
+document.getElementById('sendWA').addEventListener('click',()=>{
+let msg = "Halo, saya ingin memesan vendor wedding berikut:%0A";
+selectedVendors.forEach(name=>{
+const vendor = vendors.find(v=>v.name===name);
+if(vendor){
+const sel = document.querySelector(`select[data-name="${vendor.name}"]`);
+const qtySel = document.querySelector(`select.qtySelect[data-name="${vendor.name}"]`);
+const pkg = vendor.packages[sel.value];
+const qty = parseInt(qtySel.value);
+msg += `- ${vendor.name} (${pkg.name}) x${qty}: Rp${(pkg.price*qty).toLocaleString('id-ID')}%0A`;
+}
+});
+const total = document.querySelector('#totalPrice').textContent.split(': ')[1];
+msg += `Total: ${total}`;
+const waLink = `https://wa.me/6285727754442?text=${msg}`;
+window.open(waLink,'_blank');
+});
+
+renderVendors();
 </script>
 
 </body>
