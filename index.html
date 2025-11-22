@@ -11,19 +11,13 @@
   header h1 {color: #d17a7a;}
   .container {width: 90%; max-width: 1200px; margin: 20px auto;}
   h2 {margin-bottom: 10px; color: #444;}
-
-  /* Filter Controls */
   .filters {display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;}
   .filters select, .filters input, .filters button {padding: 8px 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px;}
-
-  /* Kategori Grid */
   .categories {display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;}
   .category-card {background: #fff; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;}
   .category-card:hover {transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1);}
   .category-card img {width: 40px; height: 40px; margin-bottom: 5px;}
   .category-card h3 {font-size: 13px;}
-
-  /* Vendor List */
   .vendor-list {display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;}
   .vendor-card {background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s;}
   .vendor-card:hover {transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);}
@@ -113,6 +107,7 @@ categories.forEach(cat=>{
 const locations=[...new Set(vendors.map(v=>v.location))];
 locations.forEach(loc=>filterLocation.innerHTML+=`<option value="${loc}">${loc}</option>`);
 
+// Tampilkan vendor
 function displayVendors(list){
   vendorList.innerHTML='';
   if(list.length===0){vendorList.innerHTML='<p>Tidak ada vendor ditemukan.</p>'; return;}
@@ -133,7 +128,7 @@ function displayVendors(list){
   });
 }
 
-// Simpan vendor terpilih
+// Simpan vendor terpilih untuk order
 function selectVendor(vendorName){
   localStorage.setItem('selectedVendor', vendorName);
 }
@@ -143,18 +138,9 @@ function applyFilters(){
   let filtered=vendors.filter(v=>{
     let catMatch=filterCategory.value?v.category===filterCategory.value:true;
     let locMatch=filterLocation.value?v.location===filterLocation.value:true;
-    let priceMatch=true;
-    if(filterPrice.value==='low') priceMatch=v.packages.some(p=>parseInt(p.replace(/\D/g,''))<3000000);
-    if(filterPrice.value==='mid') priceMatch=v.packages.some(p=>{let pr=parseInt(p.replace(/\D/g,'')); return pr>=3000000 && pr<=6000000;});
-    if(filterPrice.value==='high') priceMatch=v.packages.some(p=>parseInt(p.replace(/\D/g,''))>6000000);
     let searchMatch=searchInput.value?v.name.toLowerCase().includes(searchInput.value.toLowerCase()):true;
-    return catMatch && locMatch && priceMatch && searchMatch;
+    return catMatch && locMatch && searchMatch;
   });
-
-  if(sortBy.value==='priceAsc') filtered.sort((a,b)=>Math.min(...a.packages.map(p=>parseInt(p.replace(/\D/g,''))))-Math.min(...b.packages.map(p=>parseInt(p.replace(/\D/g,'')))));
-  if(sortBy.value==='priceDesc') filtered.sort((a,b)=>Math.max(...b.packages.map(p=>parseInt(p.replace(/\D/g,''))))-Math.max(...a.packages.map(p=>parseInt(p.replace(/\D/g,'')))));
-  if(sortBy.value==='ratingDesc') filtered.sort((a,b)=>b.rating-a.rating);
-
   displayVendors(filtered);
 }
 
@@ -168,11 +154,10 @@ categoryContainer.addEventListener('click', e=>{
   filterCategory.value=card.dataset.category;
   applyFilters();
 });
-
-[filterCategory, filterLocation, filterPrice, sortBy].forEach(el=>el.addEventListener('change', applyFilters));
+[filterCategory, filterLocation].forEach(el=>el.addEventListener('change', applyFilters));
 searchInput.addEventListener('input', applyFilters);
 document.getElementById('resetFilters').addEventListener('click', ()=>{
-  filterCategory.value=''; filterLocation.value=''; filterPrice.value=''; sortBy.value=''; searchInput.value='';
+  filterCategory.value=''; filterLocation.value=''; searchInput.value='';
   displayVendors(vendors);
 });
 </script>
