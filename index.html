@@ -6,142 +6,143 @@
 <title>Wedding Vendor Selection</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
-  body {background:#fff0f5; color:#333;}
-  header {background:#ffdee9; padding:25px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
-  header h1 {color:#d6336c; font-size:26px;}
-  .container {width:90%; max-width:1200px; margin:20px auto;}
-  h2 {margin:20px 0 10px; color:#d6336c;}
-  
-  /* Kategori Grid */
-  .categories {display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:15px;}
-  .category-card {background:linear-gradient(135deg,#ffd6e0,#ffdee9); border-radius:15px; padding:15px; text-align:center; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-  .category-card:hover {transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.15);}
-  .category-card img {width:50px; height:50px; margin-bottom:5px;}
-  .category-card h3 {font-size:14px; font-weight:600; line-height:1.2;}
+* {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body {background:#fff0f5;color:#333;}
+header {background:#ffdee9;padding:25px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+header h1 {color:#d6336c;font-size:26px;}
+.container {width:90%;max-width:1200px;margin:20px auto;}
+h2 {margin:20px 0 10px;color:#d6336c;}
 
-  /* Vendor List */
-  .vendor-list {display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-top:20px;}
-  .vendor-card {background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.1); position:relative; transition:all 0.3s;}
-  .vendor-card:hover {transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.2);}
-  .vendor-card img {width:100%; height:150px; object-fit:cover;}
-  .vendor-card .info {padding:12px;}
-  .vendor-card .info h4 {margin-bottom:5px; font-size:16px; color:#d6336c;}
-  .vendor-card .info p {font-size:13px; margin-bottom:5px;}
-  .vendor-card .info ul {font-size:13px; margin-bottom:5px; padding-left:20px; list-style:disc;}
-  .vendor-card input[type=checkbox] {position:absolute; top:10px; right:10px; width:22px; height:22px; cursor:pointer;}
-  
-  /* Button */
-  #proceedBtn {display:block; width:100%; margin:25px 0; padding:12px; background:#d6336c; color:#fff; border:none; border-radius:10px; font-size:18px; cursor:pointer; transition:0.3s;}
-  #proceedBtn:hover {background:#b61a4b;}
+/* Kategori Grid */
+.categories {display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:15px;}
+.category-card {background:linear-gradient(135deg,#ffd6e0,#ffdee9);border-radius:15px;padding:15px;text-align:center;cursor:pointer;transition:all 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.category-card:hover {transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+.category-card img {width:50px;height:50px;margin-bottom:5px;}
+.category-card h3 {font-size:14px;font-weight:600;line-height:1.2;}
 
-  @media(max-width:600px){
-    .categories {grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
-    .vendor-card img {height:130px;}
-  }
+/* Vendor List */
+.vendor-list {display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;margin-top:20px;}
+.vendor-card {background:#fff;border-radius:15px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);position:relative;transition:all 0.3s;}
+.vendor-card:hover {transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.2);}
+.vendor-card img {width:100%;height:150px;object-fit:cover;}
+.vendor-card .info {padding:12px;}
+.vendor-card .info h4 {margin-bottom:5px;font-size:16px;color:#d6336c;}
+.vendor-card .info p {font-size:13px;margin-bottom:5px;}
+.vendor-card .info ul {font-size:13px;margin-bottom:5px;padding-left:20px;list-style:disc;}
+.vendor-card input[type=checkbox] {position:absolute;top:10px;right:10px;width:22px;height:22px;cursor:pointer;}
+
+/* Button */
+#proceedBtn {display:block;width:100%;margin:25px 0;padding:12px;background:#d6336c;color:#fff;border:none;border-radius:10px;font-size:18px;cursor:pointer;transition:0.3s;}
+#proceedBtn:hover {background:#b61a4b;}
+
+#totalPrice {margin:10px 0;font-size:16px;font-weight:600;color:#d6336c;}
+
+@media(max-width:600px){
+.categories {grid-template-columns:repeat(auto-fill,minmax(80px,1fr));}
+.vendor-card img {height:130px;}
+}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Pilih Vendor Wedding Favoritmu</h1>
+<h1>Pilih Vendor Wedding Favoritmu</h1>
 </header>
 
 <div class="container">
-  <h2>Kategori Vendor</h2>
-  <div class="categories" id="categories"></div>
+<h2>Kategori Vendor</h2>
+<div class="categories" id="categories"></div>
 
-  <h2>Daftar Vendor</h2>
-  <div class="vendor-list" id="vendor-list"></div>
+<h2>Daftar Vendor</h2>
+<div class="vendor-list" id="vendor-list"></div>
 
-  <button id="proceedBtn">Lanjutkan ke Order</button>
+<div id="totalPrice">Total Harga: Rp0</div>
+
+<button id="proceedBtn">Lanjutkan ke Order</button>
 </div>
 
 <script>
-// Semua kategori lengkap
+// Semua kategori
 const categories = [
-  {id:"WO", name:"Wedding Organizer", icon:"https://img.icons8.com/ios/50/wedding.png"},
-  {id:"MUA", name:"Make-Up Artist", icon:"https://img.icons8.com/ios/50/makeup.png"},
-  {id:"Catering", name:"Catering", icon:"https://img.icons8.com/ios/50/restaurant.png"},
-  {id:"Dekorasi", name:"Dekorasi", icon:"https://img.icons8.com/ios/50/decor.png"},
-  {id:"Venue", name:"Venue (Gedung/Hotel)", icon:"https://img.icons8.com/ios/50/hotel.png"},
-  {id:"Fotografer", name:"Fotografer", icon:"https://img.icons8.com/ios/50/camera.png"},
-  {id:"Videografer", name:"Videografer", icon:"https://img.icons8.com/ios/50/video.png"},
-  {id:"Entertainment", name:"Entertainment / Musik", icon:"https://img.icons8.com/ios/50/music.png"},
-  {id:"MC", name:"MC / Pembawa Acara", icon:"https://img.icons8.com/ios/50/microphone.png"},
-  {id:"Hantaran", name:"Hantaran / Seserahan", icon:"https://img.icons8.com/ios/50/gift.png"},
-  {id:"Tenda", name:"Sewa Tenda", icon:"https://img.icons8.com/ios/50/tent.png"},
-  {id:"Sound", name:"Sound / Lighting", icon:"https://img.icons8.com/ios/50/speaker.png"},
-  {id:"Souvenir", name:"Souvenir", icon:"https://img.icons8.com/ios/50/souvenir.png"},
-  {id:"Kue", name:"Kue Pengantin", icon:"https://img.icons8.com/ios/50/cake.png"},
-  {id:"Photobooth", name:"Photobooth / Video 360", icon:"https://img.icons8.com/ios/50/photobooth.png"},
-  {id:"Percetakan", name:"Percetakan Undangan", icon:"https://img.icons8.com/ios/50/print.png"},
-  {id:"Digital", name:"Undangan Digital", icon:"https://img.icons8.com/ios/50/digital.png"},
-  {id:"Lainnya", name:"Peralatan Lain-lain", icon:"https://img.icons8.com/ios/50/tools.png"},
+{id:"WO", name:"Wedding Organizer", icon:"https://img.icons8.com/ios/50/wedding.png"},
+{id:"MUA", name:"Make-Up Artist", icon:"https://img.icons8.com/ios/50/makeup.png"},
+{id:"Catering", name:"Catering", icon:"https://img.icons8.com/ios/50/restaurant.png"},
+{id:"Dekorasi", name:"Dekorasi", icon:"https://img.icons8.com/ios/50/decor.png"},
+{id:"Venue", name:"Venue", icon:"https://img.icons8.com/ios/50/hotel.png"}
 ];
 
 // Simulasi beberapa vendor per kategori
 const vendors = [
-  {name:"Vendor WO A", category:"WO", location:"Jakarta", packages:["Bronze Rp5.000.000","Silver Rp7.500.000","Gold Rp10.000.000"], image:"https://source.unsplash.com/400x300/?wedding", whatsapp:"6285727754442"},
-  {name:"Vendor WO B", category:"WO", location:"Bandung", packages:["Silver Rp6.000.000","Gold Rp9.000.000"], image:"https://source.unsplash.com/400x300/?wedding2", whatsapp:"6285727754442"},
-  {name:"MUA B", category:"MUA", location:"Bandung", packages:["Basic Rp1.500.000","Premium Rp2.500.000"], image:"https://source.unsplash.com/400x300/?makeup", whatsapp:"6285727754442"},
-  {name:"MUA C", category:"MUA", location:"Jakarta", packages:["Silver Rp3.000.000","Gold Rp5.000.000"], image:"https://source.unsplash.com/400x300/?makeup2", whatsapp:"6285727754442"},
-  {name:"Catering C", category:"Catering", location:"Surabaya", packages:["Paket A Rp3.000.000","Paket B Rp5.000.000"], image:"https://source.unsplash.com/400x300/?catering", whatsapp:"6285727754442"},
-  {name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", packages:["Silver Rp4.000.000","Gold Rp6.500.000"], image:"https://source.unsplash.com/400x300/?wedding-decor", whatsapp:"6285727754442"},
-  {name:"Venue A", category:"Venue", location:"Jakarta", packages:["Standard Rp8.000.000","Premium Rp12.000.000"], image:"https://source.unsplash.com/400x300/?venue", whatsapp:"6285727754442"},
-  {name:"Fotografer A", category:"Fotografer", location:"Bandung", packages:["Paket Foto Rp2.500.000","Paket Video+Foto Rp4.500.000"], image:"https://source.unsplash.com/400x300/?photography", whatsapp:"6285727754442"},
-  {name:"Videografer A", category:"Videografer", location:"Jakarta", packages:["Paket Video Rp3.000.000","Full Paket Rp5.500.000"], image:"https://source.unsplash.com/400x300/?video", whatsapp:"6285727754442"},
-  {name:"MC A", category:"MC", location:"Surabaya", packages:["Basic Rp1.000.000","Premium Rp2.000.000"], image:"https://source.unsplash.com/400x300/?microphone", whatsapp:"6285727754442"},
+{name:"Vendor WO A", category:"WO", location:"Jakarta", packages:[{name:"Bronze", price:5000000},{name:"Silver", price:7500000},{name:"Gold", price:10000000}], image:"https://source.unsplash.com/400x300/?wedding", whatsapp:"6285727754442"},
+{name:"Vendor WO B", category:"WO", location:"Bandung", packages:[{name:"Silver", price:6000000},{name:"Gold", price:9000000}], image:"https://source.unsplash.com/400x300/?wedding2", whatsapp:"6285727754442"},
+{name:"MUA B", category:"MUA", location:"Bandung", packages:[{name:"Basic", price:1500000},{name:"Premium", price:2500000}], image:"https://source.unsplash.com/400x300/?makeup", whatsapp:"6285727754442"},
+{name:"MUA C", category:"MUA", location:"Jakarta", packages:[{name:"Silver", price:3000000},{name:"Gold", price:5000000}], image:"https://source.unsplash.com/400x300/?makeup2", whatsapp:"6285727754442"},
+{name:"Catering C", category:"Catering", location:"Surabaya", packages:[{name:"Paket A", price:3000000},{name:"Paket B", price:5000000}], image:"https://source.unsplash.com/400x300/?catering", whatsapp:"6285727754442"},
+{name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", packages:[{name:"Silver", price:4000000},{name:"Gold", price:6500000}], image:"https://source.unsplash.com/400x300/?wedding-decor", whatsapp:"6285727754442"},
+{name:"Venue A", category:"Venue", location:"Jakarta", packages:[{name:"Standard", price:8000000},{name:"Premium", price:12000000}], image:"https://source.unsplash.com/400x300/?venue", whatsapp:"6285727754442"},
+{name:"Venue B", category:"Venue", location:"Bandung", packages:[{name:"Standard", price:7000000},{name:"Premium", price:11000000}], image:"https://source.unsplash.com/400x300/?venue2", whatsapp:"6285727754442"},
 ];
 
 // Elemen DOM
 const categoryContainer = document.getElementById('categories');
 const vendorList = document.getElementById('vendor-list');
+const totalPriceEl = document.getElementById('totalPrice');
 
 // Render kategori
 categories.forEach(cat=>{
-  const card=document.createElement('div');
-  card.className='category-card';
-  card.dataset.category=cat.id;
-  card.innerHTML=`<img src="${cat.icon}" alt="${cat.name}"><h3>${cat.name}</h3>`;
-  categoryContainer.appendChild(card);
+const card=document.createElement('div');
+card.className='category-card';
+card.dataset.category=cat.id;
+card.innerHTML=`<img src="${cat.icon}" alt="${cat.name}"><h3>${cat.name}</h3>`;
+categoryContainer.appendChild(card);
 });
 
-// Tampilkan vendor sesuai kategori
+// Hitung total harga
+function calculateTotal(){
+let total=0;
+document.querySelectorAll('.vendorCheckbox:checked').forEach(cb=>{
+const vendor = vendors.find(v=>v.name===cb.dataset.name);
+if(vendor) total+=vendor.packages[0].price; // ambil paket pertama untuk simulasi
+});
+totalPriceEl.textContent=`Total Harga: Rp${total.toLocaleString('id-ID')}`;
+}
+
+// Tampilkan vendor per kategori
 function displayVendors(category){
-  vendorList.innerHTML='';
-  const filtered = vendors.filter(v => v.category === category);
-  if(filtered.length===0){vendorList.innerHTML='<p>Tidak ada vendor ditemukan.</p>'; return;}
-  filtered.forEach(v=>{
-    const card=document.createElement('div');
-    card.className='vendor-card';
-    card.innerHTML=`
-      <input type="checkbox" class="vendorCheckbox" data-name="${v.name}">
-      <img src="${v.image}" alt="${v.name}">
-      <div class="info">
-        <h4>${v.name}</h4>
-        <p>Lokasi: ${v.location}</p>
-        <ul>${v.packages.map(p=>`<li>${p}</li>`).join('')}</ul>
-      </div>
-    `;
-    vendorList.appendChild(card);
-  });
+vendorList.innerHTML='';
+const filtered = vendors.filter(v => v.category === category);
+if(filtered.length===0){vendorList.innerHTML='<p>Tidak ada vendor ditemukan.</p>'; return;}
+filtered.forEach(v=>{
+const card=document.createElement('div');
+card.className='vendor-card';
+card.innerHTML=`
+<input type="checkbox" class="vendorCheckbox" data-name="${v.name}">
+<img src="${v.image}" alt="${v.name}">
+<div class="info">
+<h4>${v.name}</h4>
+<p>Lokasi: ${v.location}</p>
+<ul>${v.packages.map(p=>`<li>${p.name}: Rp${p.price.toLocaleString('id-ID')}</li>`).join('')}</ul>
+</div>
+`;
+vendorList.appendChild(card);
+});
+document.querySelectorAll('.vendorCheckbox').forEach(cb=>cb.addEventListener('change', calculateTotal));
 }
 
 // Event listener kategori
 categoryContainer.addEventListener('click', e=>{
-  const card = e.target.closest('.category-card');
-  if(!card) return;
-  const category = card.dataset.category;
-  displayVendors(category);
+const card = e.target.closest('.category-card');
+if(!card) return;
+displayVendors(card.dataset.category);
+calculateTotal();
 });
 
 // Tombol lanjutkan ke order
 document.getElementById('proceedBtn').addEventListener('click', ()=>{
-  const selected = Array.from(document.querySelectorAll('.vendorCheckbox:checked')).map(cb=>cb.dataset.name);
-  if(selected.length===0){alert('Pilih minimal satu vendor!'); return;}
-  localStorage.setItem('selectedVendors', JSON.stringify(selected));
-  window.location.href = 'order.html';
+const selected = Array.from(document.querySelectorAll('.vendorCheckbox:checked')).map(cb=>cb.dataset.name);
+if(selected.length===0){alert('Pilih minimal satu vendor!'); return;}
+localStorage.setItem('selectedVendors', JSON.stringify(selected));
+window.location.href='order.html';
 });
 </script>
 
