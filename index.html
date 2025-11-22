@@ -3,25 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vendor Wedding</title>
+<title>Wedding Vendor Selection</title>
 <style>
-  body { font-family: Arial; background: #f6f7fb; padding: 20px; }
-  .card { background: white; padding: 20px; margin: 10px; border-radius: 10px; display: inline-block; width: 200px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+  * {margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif;}
+  body {background: #f8f5f2; color: #333;}
+  header {background: #fff; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+  header h1 {color: #d17a7a;}
+  .container {width: 90%; max-width: 1200px; margin: 20px auto;}
+  h2 {margin-bottom: 10px; color: #444;}
+
+  /* Filter Controls */
+  .filters {display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;}
+  .filters select, .filters input, .filters button {padding: 8px 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px;}
+
+  /* Kategori Grid */
+  .categories {display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;}
+  .category-card {background: #fff; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;}
+  .category-card:hover {transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1);}
+  .category-card img {width: 40px; height: 40px; margin-bottom: 5px;}
+  .category-card h3 {font-size: 13px;}
+
+  /* Vendor List */
+  .vendor-list {display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;}
+  .vendor-card {background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s;}
+  .vendor-card:hover {transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15);}
+  .vendor-card img {width:100%; height:150px; object-fit: cover;}
+  .vendor-card .info {padding: 10px;}
+  .vendor-card .info h4 {margin-bottom: 5px; font-size: 16px;}
+  .vendor-card .info p {font-size: 13px; margin-bottom: 5px;}
+  .vendor-card .info ul {font-size: 13px; margin-bottom: 5px; list-style: disc; padding-left: 20px;}
+  .vendor-card .info .rating {color: #f5b50a; font-size: 14px; margin-bottom: 5px;}
+  .vendor-card .info a {display: inline-block; padding: 6px 10px; background: #d17a7a; color: #fff; border-radius: 5px; text-decoration: none; font-size: 13px; margin-top: 5px;}
 </style>
 </head>
 <body>
-<h1>Pilih Vendor</h1>
-<div class="card" onclick="goToOrder('Wedding Organizer')">Wedding Organizer</div>
-<div class="card" onclick="goToOrder('Catering')">Catering</div>
-<div class="card" onclick="goToOrder('Fotografer')">Fotografer</div>
+
+<header>
+  <h1>Pilih Vendor Wedding Favoritmu</h1>
+</header>
+
+<div class="container">
+  <h2>Filter & Sorting</h2>
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Cari vendor...">
+    <select id="filterCategory"><option value="">Semua Kategori</option></select>
+    <select id="filterLocation"><option value="">Semua Lokasi</option></select>
+    <select id="filterPrice">
+      <option value="">Semua Harga</option>
+      <option value="low">Di bawah Rp3.000.000</option>
+      <option value="mid">Rp3.000.000 - Rp6.000.000</option>
+      <option value="high">Di atas Rp6.000.000</option>
+    </select>
+    <select id="sortBy">
+      <option value="">Urutkan</option>
+      <option value="priceAsc">Harga Termurah</option>
+      <option value="priceDesc">Harga Termahal</option>
+      <option value="ratingDesc">Rating Tertinggi</option>
+    </select>
+    <button id="resetFilters">Reset</button>
+  </div>
+
+  <h2>Kategori Vendor</h2>
+  <div class="categories" id="categories"></div>
+
+  <h2>Daftar Vendor</h2>
+  <div class="vendor-list" id="vendor-list"></div>
+</div>
 
 <script>
-function goToOrder(vendorName) {
-  // Simpan nama vendor ke localStorage supaya bisa dibaca di halaman order
-  localStorage.setItem('vendorName', vendorName);
-  // buka halaman order
-  window.location.href = 'order.html';
+const categories = [
+  {id:"WO", name:"Wedding Organizer", icon:"https://img.icons8.com/ios/50/wedding.png"},
+  {id:"MUA", name:"Make-Up Artist", icon:"https://img.icons8.com/ios/50/makeup.png"},
+  {id:"Catering", name:"Catering", icon:"https://img.icons8.com/ios/50/restaurant.png"},
+  {id:"Dekorasi", name:"Dekorasi", icon:"https://img.icons8.com/ios/50/decor.png"},
+  {id:"Venue", name:"Venue", icon:"https://img.icons8.com/ios/50/hotel.png"},
+  {id:"Fotografer", name:"Fotografer", icon:"https://img.icons8.com/ios/50/camera.png"},
+  {id:"Videografer", name:"Videografer", icon:"https://img.icons8.com/ios/50/video.png"},
+  {id:"Entertainment", name:"Entertainment / Musik", icon:"https://img.icons8.com/ios/50/music.png"},
+  {id:"MC", name:"MC / Pembawa Acara", icon:"https://img.icons8.com/ios/50/microphone.png"},
+  {id:"Souvenir", name:"Souvenir", icon:"https://img.icons8.com/ios/50/souvenir.png"},
+];
+
+const vendors = [
+  {name:"Vendor WO A", category:"WO", location:"Jakarta", rating:4.5, packages:["Bronze","Silver","Gold"], image:"https://source.unsplash.com/400x300/?wedding", whatsapp:"6281234567890"},
+  {name:"MUA B", category:"MUA", location:"Bandung", rating:4.0, packages:["Basic","Premium"], image:"https://source.unsplash.com/400x300/?makeup", whatsapp:"6281234567890"},
+  {name:"Catering C", category:"Catering", location:"Surabaya", rating:4.8, packages:["Paket A","Paket B"], image:"https://source.unsplash.com/400x300/?catering", whatsapp:"6281234567890"},
+  {name:"Dekorasi D", category:"Dekorasi", location:"Yogyakarta", rating:4.7, packages:["Silver","Gold"], image:"https://source.unsplash.com/400x300/?wedding-decor", whatsapp:"6281234567890"},
+];
+
+const categoryContainer = document.getElementById('categories');
+const filterCategory = document.getElementById('filterCategory');
+const filterLocation = document.getElementById('filterLocation');
+const filterPrice = document.getElementById('filterPrice');
+const sortBy = document.getElementById('sortBy');
+const searchInput = document.getElementById('searchInput');
+const vendorList = document.getElementById('vendor-list');
+
+// Generate kategori cards & filter options
+categories.forEach(cat=>{
+  const card=document.createElement('div');
+  card.className='category-card';
+  card.dataset.category=cat.id;
+  card.innerHTML=`<img src="${cat.icon}" alt="${cat.name}"><h3>${cat.name}</h3>`;
+  categoryContainer.appendChild(card);
+  filterCategory.innerHTML+=`<option value="${cat.id}">${cat.name}</option>`;
+});
+
+// Populate location filter
+const locations=[...new Set(vendors.map(v=>v.location))];
+locations.forEach(loc=>filterLocation.innerHTML+=`<option value="${loc}">${loc}</option>`);
+
+function displayVendors(list){
+  vendorList.innerHTML='';
+  if(list.length===0){vendorList.innerHTML='<p>Tidak ada vendor ditemukan.</p>'; return;}
+  list.forEach(v=>{
+    const card=document.createElement('div');
+    card.className='vendor-card';
+    card.innerHTML=`
+      <img src="${v.image}" alt="${v.name}">
+      <div class="info">
+        <h4>${v.name}</h4>
+        <p>Lokasi: ${v.location}</p>
+        <p class="rating">Rating: ${'★'.repeat(Math.floor(v.rating))}${v.rating%1?'½':''}</p>
+        <ul>${v.packages.map(p=>`<li>${p}</li>`).join('')}</ul>
+        <a href="order.html" onclick="selectVendor('${v.name}')" target="_blank">Pesan Sekarang</a>
+      </div>
+    `;
+    vendorList.appendChild(card);
+  });
 }
+
+// Simpan vendor terpilih
+function selectVendor(vendorName){
+  localStorage.setItem('selectedVendor', vendorName);
+}
+
+// Filter + search + sort
+function applyFilters(){
+  let filtered=vendors.filter(v=>{
+    let catMatch=filterCategory.value?v.category===filterCategory.value:true;
+    let locMatch=filterLocation.value?v.location===filterLocation.value:true;
+    let priceMatch=true;
+    if(filterPrice.value==='low') priceMatch=v.packages.some(p=>parseInt(p.replace(/\D/g,''))<3000000);
+    if(filterPrice.value==='mid') priceMatch=v.packages.some(p=>{let pr=parseInt(p.replace(/\D/g,'')); return pr>=3000000 && pr<=6000000;});
+    if(filterPrice.value==='high') priceMatch=v.packages.some(p=>parseInt(p.replace(/\D/g,''))>6000000);
+    let searchMatch=searchInput.value?v.name.toLowerCase().includes(searchInput.value.toLowerCase()):true;
+    return catMatch && locMatch && priceMatch && searchMatch;
+  });
+
+  if(sortBy.value==='priceAsc') filtered.sort((a,b)=>Math.min(...a.packages.map(p=>parseInt(p.replace(/\D/g,''))))-Math.min(...b.packages.map(p=>parseInt(p.replace(/\D/g,'')))));
+  if(sortBy.value==='priceDesc') filtered.sort((a,b)=>Math.max(...b.packages.map(p=>parseInt(p.replace(/\D/g,''))))-Math.max(...a.packages.map(p=>parseInt(p.replace(/\D/g,'')))));
+  if(sortBy.value==='ratingDesc') filtered.sort((a,b)=>b.rating-a.rating);
+
+  displayVendors(filtered);
+}
+
+// Initial display
+displayVendors(vendors);
+
+// Event listeners
+categoryContainer.addEventListener('click', e=>{
+  const card=e.target.closest('.category-card');
+  if(!card) return;
+  filterCategory.value=card.dataset.category;
+  applyFilters();
+});
+
+[filterCategory, filterLocation, filterPrice, sortBy].forEach(el=>el.addEventListener('change', applyFilters));
+searchInput.addEventListener('input', applyFilters);
+document.getElementById('resetFilters').addEventListener('click', ()=>{
+  filterCategory.value=''; filterLocation.value=''; filterPrice.value=''; sortBy.value=''; searchInput.value='';
+  displayVendors(vendors);
+});
 </script>
+
 </body>
 </html>
